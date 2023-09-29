@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forgot Password</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+</head>
+<style>
+    body {
+    font-family: Arial, sans-serif;
+}
+
+.container {
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f4f4f4;
+    text-align: center;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+input[type="email"],
+input[type="text"],
+input[type="password"] {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+}
+
+button {
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+#error-message {
+    color: red;
+}
+
+#success-message {
+    color: green;
+}
+
+</style>
+
+<body>
+    <div class="container">
+        <h1>Password Reset</h1>
+        <div id="step-1">
+            <p>Step 1: Enter your email and click "Send OTP"</p>
+            <form id="step-1-form">
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <button type="button" id="send-otp-button">Send OTP</button>
+            </form>
+        </div>
+        <div id="step-2" >
+            <p>Step 2: Enter OTP and new password</p>
+            <form id="step-2-form">
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="emails" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="otp">OTP</label>
+                    <input type="text" id="otp" name="otp" required>
+                </div>
+                <div class="form-group">
+                    <label for="new-password">New Password</label>
+                    <input type="password" id="new-password" name="newPassword" required>
+                </div>
+                <button type="submit">Change Password</button>
+            </form>
+        </div>
+        <div id="message"></div>
+    </div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+    const step1Form = document.getElementById("step-1-form");
+    const step2Form = document.getElementById("step-2-form");
+    const sendOTPButton = document.getElementById("send-otp-button");
+    const messageDiv = document.getElementById("message");
+
+    sendOTPButton.addEventListener("click", async function () {
+        const email = document.getElementById("email").value;
+
+        try {
+            const response = await axios.post('/api/change-password', { email });
+
+            const data = response.data;
+
+            if (data.success) {
+                messageDiv.textContent = "OTP sent successfully!";
+                messageDiv.classList.remove("error");
+                messageDiv.classList.add("success");
+                step1Form.style.display = "none";
+                step2Form.style.display = "block";
+            } else {
+                messageDiv.textContent = data.message;
+                messageDiv.classList.remove("success");
+                messageDiv.classList.add("error");
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    });
+
+    step2Form.addEventListener("submit", async function (e) {
+        e.preventDefault();
+
+        const otp = document.getElementById("otp").value;
+        const newPassword = document.getElementById("new-password").value;
+        const emails = document.getElementById("emails").value;
+
+        try {
+            const response = await axios.post('/api/verifyotp', { email: emails, otp, newPassword });
+            const data = response.data;
+
+            if (data.success) {
+                messageDiv.textContent = "Password changed successfully!";
+                messageDiv.classList.remove("error");
+                messageDiv.classList.add("success");
+            } else {
+                messageDiv.textContent = data.message;
+                messageDiv.classList.remove("success");
+                messageDiv.classList.add("error");
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    });
+});
+
+</script>
+</body>
+</html>

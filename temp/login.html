@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<style>
+    body {
+    font-family: Arial, sans-serif;
+    background-color: #f2f2f2;
+    text-align: center;
+}
+
+.login-container {
+    background-color: #fff;
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+h2 {
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+label {
+    margin-top: 10px;
+}
+
+input[type="text"],
+input[type="password"] {
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+button[type="submit"] {
+    background-color: #007BFF;
+    color: #fff;
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button[type="submit"]:hover {
+    background-color: #0056b3;
+}
+
+.error-message {
+    color: red;
+    font-weight: bold;
+}
+
+</style>
+<body>
+    <div class="login-container">
+        <h2>Login</h2>
+        <form id="login-form">
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required>
+            
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required>
+            
+            <button type="submit">Login</button>
+        </form>
+        <p id="error-message" class="error-message"></p>
+    </div>
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+    const loginForm = document.getElementById('login-form');
+    const errorMessage = document.getElementById('error-message');
+    
+    loginForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+        
+        try {
+            // Make a POST request to your server's login endpoint
+            const response = await axios.post('http://localhost:4000/api/login', {
+                email,
+                password
+            });
+            
+            // Assuming the server responds with a JWT token upon successful login
+            const token = response.data.token;
+      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+
+            
+            const userData = JSON.stringify(response.data.user._id); // Convert user object to JSON string
+            
+            // Store the authToken and user data in local storage
+            localStorage.setItem('userData', userData);
+            
+            // Redirect the user to a dashboard or another authenticated page
+            window.location.href = '/video-upload';
+        } catch (error) {
+            console.error('Login error:', error);
+            
+            // Display an error message to the user
+            errorMessage.innerText = 'Invalid credentials. Please try again.';
+        }
+    });
+});
+
+
+    </script>
+</body>
+</html>

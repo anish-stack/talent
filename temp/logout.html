@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Logout</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            text-align: center;
+        }
+
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        button[type="submit"] {
+            background-color: #007BFF;
+            color: #fff;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Logout</h2>
+        <form id="logout-form">
+            <button id="logout-button">Logout</button>
+        </form>
+    </div>
+    <script>
+        function logout(e) {
+          e.preventDefault();
+      
+          // Make a GET request to the logout route
+          axios.get('/logout')
+            .then(() => {
+              // Remove the JWT token from local storage
+              localStorage.removeItem('authToken');
+              
+              // Remove the 'Authorization' header from Axios
+              delete axios.defaults.headers.common['Authorization'];
+              alert('Logout sucess.');
+
+              // Redirect the user to the login page or any other desired destination
+            })
+            .catch(error => {
+              console.error('Logout error:', error);
+              // Display an error message to the user
+              alert('Logout failed. Please try again.');
+            });
+        }
+      
+        // Attach the logout function to the click event of the logout button
+        document.getElementById('logout-button').addEventListener('click', logout);
+      </script>
+      
+</body>
+</html>
